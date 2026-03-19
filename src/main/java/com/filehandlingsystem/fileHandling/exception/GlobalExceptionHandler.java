@@ -35,6 +35,30 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponseDto,HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(DocumentNotFound.class)
+    public ResponseEntity<ErrorResponseDto> handleDocumentNotFoundException(DocumentNotFound exc, HttpServletRequest request){
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                HttpStatus.NOT_FOUND.value(),
+                "DOCUMENT_NOT_FOUND",
+                exc.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(errorResponseDto,HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserNotFound.class)
+    public ResponseEntity<ErrorResponseDto> handleUserNotFound(UserNotFound exc, HttpServletRequest request){
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                HttpStatus.NOT_FOUND.value(),
+                "USER_NOT_FOUND",
+                exc.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(errorResponseDto,HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGenericException(Exception exc, HttpServletRequest request){
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(
