@@ -47,7 +47,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public void store(MultipartFile file) {
+    public Boolean store(MultipartFile file) {
 
         try{
             if(file.isEmpty()){
@@ -70,6 +70,7 @@ public class FileStorageServiceImpl implements FileStorageService {
             throw new StorageException("Failed to store file: "+e.getMessage());
         }
 
+        return true;
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface DocumentMetadataService {
 
-    void save(DocumentMetadata metadata);
+    String save(MultipartFile file,Long ownerId);
 
     void delete(Long id);
 
