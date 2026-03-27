@@ -12,9 +12,9 @@ import java.util.UUID;
 @Entity
 @Data
 public class DocumentMetadata {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private  Long id;
+    private  String id;
 
     private  String fileName;
 

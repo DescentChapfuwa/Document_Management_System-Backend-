@@ -17,9 +17,11 @@ public class FileMetaDataController {
     }
 
 
-    @PostMapping("/upload/{id}")
-    public ResponseEntity<DocumentMetadata> handleDocumentUpload(@RequestBody MultipartFile file, @PathVariable Long ownerId){
-       DocumentMetadata documentMetadata = documentMetadataService.uploadDocument(file, ownerId);
-        return ResponseEntity.ok().body(documentMetadata);
+    @PostMapping("/upload/{ownerId}")
+    public ResponseEntity<DocumentMetadata> handleDocumentUpload(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable Long ownerId) {
+        DocumentMetadata documentMetadata = documentMetadataService.uploadDocument(file, ownerId);
+        return ResponseEntity.ok(documentMetadata);
     }
 }

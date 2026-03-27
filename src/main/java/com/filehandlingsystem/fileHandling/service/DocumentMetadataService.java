@@ -11,8 +11,6 @@ public interface DocumentMetadataService {
 
     void delete(Long id);
 
-    void update(DocumentMetadata metadata,Long id);
-
     List<DocumentMetadata> listAllDocuments();
 
     DocumentMetadata findDocumentByOwnerId(Long id);

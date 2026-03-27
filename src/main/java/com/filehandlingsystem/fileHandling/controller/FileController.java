@@ -30,8 +30,8 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<FileResponseDto> handleFileUpload(@RequestParam("file") MultipartFile file){
-        storageService.store(file);
+    public ResponseEntity<FileResponseDto> handleFileUpload(@RequestParam("file") MultipartFile file,String id){
+        storageService.store(file,id);
         FileResponseDto fileResponseDto = new FileResponseDto();
         fileResponseDto.setFileName(file.getName());
         fileResponseDto.setContentType(file.getContentType());

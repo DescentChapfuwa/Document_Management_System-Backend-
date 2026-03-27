@@ -48,7 +48,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public Boolean store(MultipartFile file) {
+    public Boolean store(MultipartFile file,String id) {
 
         try{
             if(file.isEmpty()){
@@ -60,7 +60,7 @@ public class FileStorageServiceImpl implements FileStorageService {
 
             String original = Paths.get(file.getOriginalFilename()).getFileName().toString();
 
-            String id = UUID.randomUUID().toString();
+
 
             String destinationFile = original.replaceAll("[^a-zA-Z0-9.-]", "");
 
