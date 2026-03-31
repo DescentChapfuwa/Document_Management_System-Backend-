@@ -1,5 +1,6 @@
 package com.filehandlingsystem.fileHandling.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,6 +23,7 @@ public class User {
 
     private String role;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "ownerId",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<DocumentMetadata> documents;
 

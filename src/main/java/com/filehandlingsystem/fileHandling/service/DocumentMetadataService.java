@@ -9,9 +9,9 @@ public interface DocumentMetadataService {
 
     DocumentMetadata uploadDocument(MultipartFile file,Long ownerId);
 
-    void delete(Long id);
+    void delete(String id);
 
     List<DocumentMetadata> listAllDocuments();
 
-    DocumentMetadata findDocumentByOwnerId(Long id);
+    DocumentMetadata findDocumentById(String id);
 }
