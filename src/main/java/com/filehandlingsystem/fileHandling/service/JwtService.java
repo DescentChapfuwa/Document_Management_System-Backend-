@@ -1,6 +1,7 @@
 package com.filehandlingsystem.fileHandling.service;
 
 import com.filehandlingsystem.fileHandling.entities.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.function.Function;
 
 @Service
 public class JwtService {
@@ -34,6 +36,19 @@ public class JwtService {
                         .currentTimeMillis() + 86400000))
                 .signWith(key)
                 .compact();
+    }
+
+    public  String extractUsername(String token){
+        return  extractClaims(token, Claims::getSubject);
+    }
+
+    private <T> T extractClaims(String token, Function<Claims, T> claimsTFunction){
+        return claimsTFunction.apply(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload());
+    }
+
+    public Boolean isTokenValid(String token,String userName){
+        String extractedUsername = extractUsername(token);
+        return extractedUsername.equals(userName);
     }
 
 }

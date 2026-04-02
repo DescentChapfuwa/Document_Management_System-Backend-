@@ -3,9 +3,7 @@ package com.filehandlingsystem.fileHandling.service.serviceImpl;
 import com.filehandlingsystem.fileHandling.config.FileStorageProperties;
 import com.filehandlingsystem.fileHandling.entities.DocumentMetadata;
 import com.filehandlingsystem.fileHandling.entities.User;
-import com.filehandlingsystem.fileHandling.exception.DocumentNotFound;
-import com.filehandlingsystem.fileHandling.exception.StorageException;
-import com.filehandlingsystem.fileHandling.exception.UserNotFound;
+import com.filehandlingsystem.fileHandling.exception.*;
 import com.filehandlingsystem.fileHandling.repository.DocumentMetadataRepository;
 import com.filehandlingsystem.fileHandling.repository.UserRepository;
 import com.filehandlingsystem.fileHandling.service.DocumentMetadataService;
@@ -52,7 +50,7 @@ public class DocumentMetadataServiceImpl implements DocumentMetadataService {
 
     @Override
     @Transactional
-    public DocumentMetadata uploadDocument(MultipartFile file, Long ownerId) {
+    public DocumentMetadata uploadDocument(MultipartFile file, String userName) {
 
         if (file.isEmpty()) {
             throw new StorageException("File cannot be empty");
@@ -60,17 +58,21 @@ public class DocumentMetadataServiceImpl implements DocumentMetadataService {
 
         try{
 
-            Optional<User> owner = userRepository.findById(ownerId);
-            if(!owner.isPresent()){
-                throw new UserNotFound("User with "+ownerId+"was  not found");
+            Boolean exists  = userRepository.existsByUserName(userName);
+
+            if(!exists){
+                throw new UserNotFound("User with username: "+userName+" was not found");
             }
+
+            User owner = userRepository.findByUserName(userName);
+
 
             String id = UUID.randomUUID().toString();
 
             DocumentMetadata metadata = new DocumentMetadata();
             metadata.setId(id);
             metadata.setFileName(file.getOriginalFilename());
-            metadata.setOwnerId(owner.get());
+            metadata.setOwnerId(owner);
             metadata.setCreatedAt(Instant.now());
 
             documentMetadataRepository.save(metadata);
@@ -85,11 +87,15 @@ public class DocumentMetadataServiceImpl implements DocumentMetadataService {
 
     @Override
     @Transactional
-    public void delete(String id) {
+    public void delete(String id,String userName) {
         DocumentMetadata doc = documentMetadataRepository
                 .findById(id)
                 .orElseThrow(()->new
                         DocumentNotFound("Document with id: "+id+" was not found"));
+
+        if(doc.getOwnerId().getUserName().equals(userName)){
+            throw new AccessDeniedException("Access has been denied to "+userName);
+        }
          try{
 
              String storedFilename = doc.getId()+"_"+doc.getFileName();
@@ -109,10 +115,14 @@ public class DocumentMetadataServiceImpl implements DocumentMetadataService {
     }
 
     @Override
-    public DocumentMetadata findDocumentById(String id) {
+    public DocumentMetadata findDocumentById(String id,String userName) {
         DocumentMetadata docInDB = documentMetadataRepository
                 .findById(id).
                 orElseThrow(()-> new DocumentNotFound("Document with id: "+id+" was not found"));
+
+        if(!docInDB.getOwnerId().getUserName().equals(userName)){
+            throw new AccessDeniedException("Access has been denied");
+        }
         return docInDB;
     }
 }

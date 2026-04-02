@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface DocumentMetadataService {
 
-    DocumentMetadata uploadDocument(MultipartFile file,Long ownerId);
+    DocumentMetadata uploadDocument(MultipartFile file,String userName);
 
-    void delete(String id);
+    void delete(String id,String userName);
 
     List<DocumentMetadata> listAllDocuments();
 
-    DocumentMetadata findDocumentById(String id);
+    DocumentMetadata findDocumentById(String id,String userName);
 }
