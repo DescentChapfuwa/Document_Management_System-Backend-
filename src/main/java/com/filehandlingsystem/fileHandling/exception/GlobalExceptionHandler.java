@@ -59,6 +59,42 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponseDto,HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDto> handleUnauthorisedException(AccessDeniedException exc, HttpServletRequest request){
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Access has been denied to the user",
+                exc.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(errorResponseDto,HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponseDto> handleBadRequestException(BadRequestException exc, HttpServletRequest request){
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                HttpStatus.BAD_REQUEST.value(),
+                "Invalid input credentials",
+                exc.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(errorResponseDto,HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponseDto> handleBadRequestException(ForbiddenException exc, HttpServletRequest request){
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                HttpStatus.FORBIDDEN.value(),
+                "User forbidden to access route",
+                exc.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(errorResponseDto,HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGenericException(Exception exc, HttpServletRequest request){
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(

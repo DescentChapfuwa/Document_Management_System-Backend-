@@ -1,14 +1,18 @@
 package com.filehandlingsystem.fileHandling.service;
 
+import com.filehandlingsystem.fileHandling.dto.LoginRequest;
+import com.filehandlingsystem.fileHandling.dto.LoginResponse;
 import com.filehandlingsystem.fileHandling.entities.User;
 
 import java.util.List;
 
 public interface UserService {
 
-    User save(User user);
+    User register(User user);
 
     void delete(Long id);
+
+    LoginResponse login(LoginRequest request);
 
     void update(User user,Long id);
 

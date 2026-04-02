@@ -7,6 +7,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.*;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -15,7 +17,6 @@ public class FileHandlingApplication {
 
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(FileHandlingApplication.class, args);
-
 
 	}
 

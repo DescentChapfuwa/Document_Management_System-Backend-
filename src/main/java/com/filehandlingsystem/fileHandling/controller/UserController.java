@@ -17,13 +17,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<User> saveUser(@RequestBody User user){
-        userService.save(user);
-        return ResponseEntity.ok().body(user);
-    }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id){
         userService.delete(id);
         return ResponseEntity.noContent().build();

@@ -1,12 +1,22 @@
 package com.filehandlingsystem.fileHandling.service.serviceImpl;
 
+import com.filehandlingsystem.fileHandling.dto.LoginRequest;
+import com.filehandlingsystem.fileHandling.dto.LoginResponse;
 import com.filehandlingsystem.fileHandling.entities.User;
+import com.filehandlingsystem.fileHandling.exception.BadRequestException;
 import com.filehandlingsystem.fileHandling.exception.UserNotFound;
 import com.filehandlingsystem.fileHandling.repository.UserRepository;
+import com.filehandlingsystem.fileHandling.service.JwtService;
 import com.filehandlingsystem.fileHandling.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,21 +27,48 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    JwtService jwtService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+
     @Override
-    public User save(User user) {
+    public User register(User user) {
+
+        Boolean userNameExists = userRepository.existsByUserName(user.getUserName());
+
+        if(userNameExists){
+            throw new BadRequestException("Username is already taken");
+        }
 
         User newUser = new User();
         newUser.setDepartment(user.getDepartment());
         newUser.setFirstName(user.getFirstName());
         newUser.setLastName(user.getLastName());
         newUser.setRole(user.getRole());
+        newUser.setUserName(user.getUserName());
         newUser.setDepartment(user.getDepartment());
-        newUser.setPassword(user.getPassword());
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         newUser.setDocuments(user.getDocuments());
 
         userRepository.save(newUser);
 
         return newUser;
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+
+        User user = userRepository.findByUserName(request.getUserName());
+
+        String token = jwtService.generateToken(user);
+
+        String expiresAt = "15 min";
+
+        LoginResponse response = new LoginResponse(token,new Date(),expiresAt);
+        return response;
     }
 
     @Override
@@ -42,6 +79,7 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.delete(userInDb.get());
     }
+
 
     @Override
     public void update(User user, Long id) {
