@@ -95,6 +95,30 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponseDto,HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(TokenNotFound.class)
+    public ResponseEntity<ErrorResponseDto> handleTokenNotFoundException(TokenNotFound exc, HttpServletRequest request){
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                HttpStatus.NOT_FOUND.value(),
+                "Token was not found",
+                exc.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(errorResponseDto,HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ErrorResponseDto> handleTokenExpiredException(TokenExpiredException exc, HttpServletRequest request){
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                HttpStatus.REQUEST_TIMEOUT.value(),
+                "Token has expired",
+                exc.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(errorResponseDto,HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGenericException(Exception exc, HttpServletRequest request){
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(

@@ -3,6 +3,9 @@ package com.filehandlingsystem.fileHandling.controller;
 import com.filehandlingsystem.fileHandling.entities.DocumentMetadata;
 import com.filehandlingsystem.fileHandling.service.DocumentMetadataService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +16,7 @@ import static org.springframework.http.RequestEntity.delete;
 
 @RestController
 @RequestMapping("document")
+@EnableMethodSecurity
 public class FileMetaDataController {
 
     private DocumentMetadataService documentMetadataService;
@@ -31,6 +35,7 @@ public class FileMetaDataController {
     }
 
     @GetMapping("/")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<DocumentMetadata>> getAll(){
         return ResponseEntity.ok(documentMetadataService.listAllDocuments());
     }
@@ -42,6 +47,7 @@ public class FileMetaDataController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteDocument(@PathVariable String id,Authentication authentication){
         documentMetadataService.delete(id, authentication.getName());
         return ResponseEntity.noContent().build();

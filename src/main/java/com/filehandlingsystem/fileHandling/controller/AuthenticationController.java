@@ -35,4 +35,9 @@ public class AuthenticationController {
         return ResponseEntity.ok(authentication.getPrincipal());
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refreshToken(@RequestBody String refreshToken){
+        return ResponseEntity.ok(userService.generateRefreshToken(refreshToken));
+    }
+
 }

@@ -2,6 +2,7 @@ package com.filehandlingsystem.fileHandling.service;
 
 import com.filehandlingsystem.fileHandling.dto.LoginRequest;
 import com.filehandlingsystem.fileHandling.dto.LoginResponse;
+import com.filehandlingsystem.fileHandling.entities.RefreshToken;
 import com.filehandlingsystem.fileHandling.entities.User;
 
 import java.util.List;
@@ -13,6 +14,8 @@ public interface UserService {
     void delete(Long id);
 
     LoginResponse login(LoginRequest request);
+
+    String generateRefreshToken(String refreshToken);
 
     void update(User user,Long id);
 

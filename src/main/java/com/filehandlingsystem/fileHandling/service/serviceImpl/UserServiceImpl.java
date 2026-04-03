@@ -2,9 +2,13 @@ package com.filehandlingsystem.fileHandling.service.serviceImpl;
 
 import com.filehandlingsystem.fileHandling.dto.LoginRequest;
 import com.filehandlingsystem.fileHandling.dto.LoginResponse;
+import com.filehandlingsystem.fileHandling.entities.RefreshToken;
 import com.filehandlingsystem.fileHandling.entities.User;
 import com.filehandlingsystem.fileHandling.exception.BadRequestException;
+import com.filehandlingsystem.fileHandling.exception.TokenExpiredException;
+import com.filehandlingsystem.fileHandling.exception.TokenNotFound;
 import com.filehandlingsystem.fileHandling.exception.UserNotFound;
+import com.filehandlingsystem.fileHandling.repository.RefreshTokenRepository;
 import com.filehandlingsystem.fileHandling.repository.UserRepository;
 import com.filehandlingsystem.fileHandling.service.JwtService;
 import com.filehandlingsystem.fileHandling.service.UserService;
@@ -12,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.Resource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,6 +37,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     JwtService jwtService;
+
+    @Autowired
+    RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -68,11 +76,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         String token = jwtService.generateToken(user);
 
+        RefreshToken refreshToken = jwtService.createRefreshToken(user.getUserName());
+
         String expiresAt = "15 min";
 
-        LoginResponse response = new LoginResponse(token,new Date(),expiresAt);
+        LoginResponse response = new LoginResponse(token,refreshToken.getToken(),new Date(),expiresAt);
         return response;
     }
+
+    @Override
+    public String generateRefreshToken(String token) {
+        Boolean tokenInDB = refreshTokenRepository.existsByToken(token);
+        if(!tokenInDB){
+            throw new TokenNotFound("Invalid refresh Token");
+        }
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(token);
+
+        User user = userRepository.findByUserName(refreshToken.getUserName());
+
+        if(refreshToken.getExpiryDate().before(new Date())){
+            throw new TokenExpiredException("Token has expired");
+        }
+        return jwtService.generateToken(user);
+    }
+
 
     @Override
     public void delete(Long id) {
